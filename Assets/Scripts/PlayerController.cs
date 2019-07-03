@@ -5,8 +5,10 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float movespeed = 12f;     // How fast the player moves forward and back.
     [SerializeField] private float turnSpeed = 180f;    // How fast the player turns in degrees per second.
+    [SerializeField] private float jumpForce = 1f;
 
     private Rigidbody rb;                               // Reference used to move the player.
+    private bool onGround = true;
     private float moveHorizontal;
     private float moveVertical;
 
@@ -24,6 +26,7 @@ public class PlayerController : MonoBehaviour
         // Adjust the rigidbody's position and orientation in FixedUpdate.
         Move();
         Turn();
+        Jump();
     }
 
     private void Move()
@@ -45,5 +48,19 @@ public class PlayerController : MonoBehaviour
 
         // Apply this rotation to the rigidbody's rotation.
         rb.MoveRotation(rb.rotation * turnRotation);
+    }
+
+    private void Jump()
+    {
+        if (Input.GetButton("Jump") && onGround)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            onGround = !onGround;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        onGround = true;
     }
 }
